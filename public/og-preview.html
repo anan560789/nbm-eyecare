@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <title>LINE 預覽圖自動合成器</title>
+  <!-- 引入 html2canvas 截圖套件 -->
+  <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+  <style>
+    body { 
+      display: flex; justify-content: center; align-items: center; 
+      min-height: 100vh; background: #e2e8f0; margin: 0; font-family: sans-serif;
+    }
+    /* 這裡設定 1200x630 是 LINE 與 FB 最佳的預覽圖比例 */
+    #og-card {
+      width: 1200px; height: 630px;
+      background: linear-gradient(135deg, #d1fae5 0%, #e0f2fe 100%);
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      position: relative; overflow: hidden;
+    }
+    /* Logo 加上白色圓角與陰影，凸顯質感 */
+    .logo-container {
+      background: white; padding: 40px 50px; border-radius: 40px;
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); margin-bottom: 40px;
+    }
+    .logo-container img { height: 180px; object-fit: contain; }
+    
+    h1 { font-size: 64px; font-weight: 900; color: #0f172a; margin: 0; text-shadow: 0 4px 6px rgba(0,0,0,0.05); letter-spacing: 4px; }
+    p { font-size: 32px; font-weight: 600; color: #475569; margin-top: 24px; letter-spacing: 2px; }
+    
+    #download-btn {
+      position: absolute; top: 30px; right: 30px; padding: 15px 30px; font-size: 20px; font-weight: bold;
+      background: #0ea5e9; color: white; border: none; border-radius: 15px; cursor: pointer;
+      box-shadow: 0 10px 15px -3px rgba(14, 165, 233, 0.3); transition: 0.2s;
+    }
+    #download-btn:hover { background: #0284c7; transform: scale(1.05); }
+  </style>
+</head>
+<body>
+  
+  <div id="og-card">
+    <div class="logo-container">
+      <!-- 自動讀取您剛剛放入的 logo.jpg -->
+      <img src="./logo.jpg" alt="NBM Logo">
+    </div>
+    <h1>彥臣專屬眼科衛教保健網站</h1>
+    <p>全方位 3D 醫學級眼部解析與精準營養對策</p>
+  </div>
+
+  <button id="download-btn" onclick="downloadOG()">⬇️ 點我自動下載預覽圖</button>
+
+  <script>
+    function downloadOG() {
+      const btn = document.getElementById('download-btn');
+      btn.style.display = 'none'; // 截圖前先隱藏按鈕
+      
+      html2canvas(document.getElementById('og-card'), { scale: 1 }).then(canvas => {
+        const link = document.createElement('a');
+        link.download = 'og-image.jpg'; // 下載的檔名
+        link.href = canvas.toDataURL('image/jpeg', 0.9);
+        link.click();
+        btn.style.display = 'block'; // 恢復按鈕
+      });
+    }
+  </script>
+</body>
+</html>
