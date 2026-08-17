@@ -11,6 +11,7 @@ const supabase = createClient(supabaseUrl, supabaseAnonKey);
 export default function NeuroVisionLiffApp() {
   const [isLiffInit, setIsLiffInit] = useState(false);
   const [lineUserId, setLineUserId] = useState<string | null>(null);
+  const [lineDisplayName, setLineDisplayName] = useState<string>('訪客');
   
   const [viewState, setViewState] = useState<'macro' | 'micro' | 'rpe-zone'>('macro');
   const [selectedSymptom, setSelectedSymptom] = useState('');
@@ -28,6 +29,7 @@ export default function NeuroVisionLiffApp() {
           if (liff.isLoggedIn()) {
             liff.getProfile().then(profile => {
               setLineUserId(profile.userId);
+              setLineDisplayName(profile.displayName);
             }).catch(console.error);
           }
         })
@@ -41,6 +43,7 @@ export default function NeuroVisionLiffApp() {
       await supabase.from('nbm_eyecare_analytics').insert([
         {
           line_user_id: lineUserId || 'anonymous',
+          line_display_name: lineDisplayName,
           event_type: eventType,
           event_target: eventTarget
         }
