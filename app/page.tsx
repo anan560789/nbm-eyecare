@@ -54,6 +54,19 @@ export default function NeuroVisionLiffApp() {
     }
   };
 
+  const handleOpenExternal = () => {
+    const targetUrl = 'https://nbm-eyecare.pages.dev';
+    if (isLiffInit && liff.isInClient()) {
+      // 若在 LINE 內部，呼叫 LIFF API 強制用外部瀏覽器開啟
+      liff.openWindow({ url: targetUrl, external: true });
+      logEvent('open_external_browser', 'liff_client');
+    } else {
+      // 若在一般環境，直接開新分頁
+      window.open(targetUrl, '_blank');
+      logEvent('open_external_browser', 'web_browser');
+    }
+  };
+  
   const handleTestClick = (test: 'amsler' | 'astigmatism') => {
     setActiveTest(activeTest === test ? null : test);
     if (activeTest !== test) {
@@ -413,6 +426,26 @@ export default function NeuroVisionLiffApp() {
       </header>
 
       <main className="p-4 space-y-8 max-w-2xl mx-auto w-full">
+
+        {/* === 外部瀏覽器開啟提示 (僅在 LINE 內部顯示) === */}
+        {isLiffInit && liff.isInClient() && (
+          <div className="bg-gradient-to-r from-sky-500 to-indigo-600 rounded-3xl p-5 shadow-lg border border-sky-400/50 flex flex-col sm:flex-row justify-between items-center text-white gap-4 animate-in fade-in slide-in-from-top-4">
+            <div>
+              <div className="font-extrabold text-lg mb-1 flex items-center gap-2">
+                <span className="text-2xl animate-bounce">🚀</span> 升級全螢幕瀏覽體驗
+              </div>
+              <div className="text-[15px] font-medium text-sky-50 leading-relaxed">
+                強烈建議點擊右方按鈕切換至手機預設瀏覽器（Safari / Chrome）開啟，不僅字體更清晰，還能直接把網站加入桌面變 App！
+              </div>
+            </div>
+            <button
+              onClick={handleOpenExternal}
+              className="w-full sm:w-auto bg-white text-indigo-700 font-black px-6 py-4 rounded-xl shadow-[0_4px_15px_rgba(0,0,0,0.2)] active:scale-95 whitespace-nowrap shrink-0 transition-transform flex items-center justify-center gap-2 text-lg"
+            >
+              外部開啟 ↗
+            </button>
+          </div>
+        )}
         
         {/* === 第一區：症狀與病症 === */}
         <section className="bg-white p-6 rounded-3xl shadow-lg border border-slate-200 relative overflow-hidden">
