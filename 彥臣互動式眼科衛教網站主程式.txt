@@ -19,7 +19,6 @@ export default function NeuroVisionLiffApp() {
   const [activeRPEFunc, setActiveRPEFunc] = useState('photo');
   const [selectedNutrient, setSelectedNutrient] = useState('');
   const [showReferences, setShowReferences] = useState(false);
-  const [activeTest, setActiveTest] = useState<'amsler' | 'astigmatism' | null>(null);
 
   useEffect(() => {
     const liffId = process.env.NEXT_PUBLIC_LIFF_ID;
@@ -51,13 +50,6 @@ export default function NeuroVisionLiffApp() {
       ]);
     } catch (error) {
       console.error('Analytics log error:', error);
-    }
-  };
-
-  const handleTestClick = (test: 'amsler' | 'astigmatism') => {
-    setActiveTest(activeTest === test ? null : test);
-    if (activeTest !== test) {
-      logEvent('start_test', test);
     }
   };
 
@@ -692,94 +684,7 @@ export default function NeuroVisionLiffApp() {
           )}
         </section>
 
-        {/* === 區塊四：居家視力快速檢測 === */}
-        <section className="bg-white p-6 rounded-3xl shadow-lg border border-slate-200 mt-8">
-          <label className="block text-slate-800 font-black mb-5 text-lg flex items-center gap-3">
-            <span className="bg-indigo-100 text-indigo-600 px-3 py-1 rounded-lg">4</span> 居家視力快速自我檢測
-          </label>
-
-          <div className="flex flex-col sm:flex-row gap-4 mb-6">
-            <button
-              onClick={() => handleTestClick('amsler')}
-              className={`flex-1 py-4 px-2 rounded-2xl font-bold text-[17px] border-2 transition-all ${activeTest === 'amsler' ? 'bg-indigo-50 border-indigo-400 text-indigo-700 shadow-md' : 'bg-white border-slate-200 text-slate-600 hover:border-indigo-200'}`}
-            >
-              🟩 阿姆斯勒方格表 (黃斑病變)
-            </button>
-            <button
-              onClick={() => handleTestClick('astigmatism')}
-              className={`flex-1 py-4 px-2 rounded-2xl font-bold text-[17px] border-2 transition-all ${activeTest === 'astigmatism' ? 'bg-indigo-50 border-indigo-400 text-indigo-700 shadow-md' : 'bg-white border-slate-200 text-slate-600 hover:border-indigo-200'}`}
-            >
-              🔆 放射狀圖 (散光檢測)
-            </button>
-          </div>
-
-          {activeTest === 'amsler' && (
-            <div className="animate-in fade-in slide-in-from-top-4 bg-indigo-50/50 p-5 rounded-2xl border border-indigo-100">
-              <h4 className="font-extrabold text-indigo-900 mb-4 flex items-center gap-2">
-                <span className="text-xl">📍</span> 檢測步驟：
-              </h4>
-              <ol className="list-decimal pl-6 text-[17px] text-slate-700 font-medium space-y-3 leading-relaxed mb-6">
-                <li>在充足光線下，戴上平時使用的眼鏡（如老花或近視眼鏡）。</li>
-                <li>距離螢幕約 30 公分，用手遮住左眼，右眼直視圖中黑點。</li>
-                <li>觀察四周方格線條是否有<strong className="text-rose-600">「扭曲、模糊、中斷或出現黑影」</strong>。</li>
-                <li>完成後，換遮右眼，重複上述步驟。</li>
-              </ol>
-              
-              <svg viewBox="0 0 400 400" className="w-full max-w-[280px] h-auto mx-auto border-4 border-slate-800 bg-white shadow-xl mb-6 block">
-                {Array.from({ length: 21 }).map((_, i) => (
-                  <g key={i}>
-                    <line x1={i * 20} y1="0" x2={i * 20} y2="400" stroke="#333" strokeWidth="1.5" />
-                    <line x1="0" y1={i * 20} x2="400" y2={i * 20} stroke="#333" strokeWidth="1.5" />
-                  </g>
-                ))}
-                <circle cx="200" cy="200" r="8" fill="#000" />
-              </svg>
-
-              <div className="bg-white p-4 rounded-xl border border-rose-200 shadow-sm">
-                <p className="text-rose-700 font-bold text-[16px] text-justify leading-loose">
-                  ⚠️ 警告：如果您看到的線條呈現波浪狀、缺角或中心有黑影，這可能是黃斑部病變的早期徵兆，請盡速前往眼科檢查！
-                </p>
-              </div>
-            </div>
-          )}
-
-          {activeTest === 'astigmatism' && (
-            <div className="animate-in fade-in slide-in-from-top-4 bg-indigo-50/50 p-5 rounded-2xl border border-indigo-100">
-              <h4 className="font-extrabold text-indigo-900 mb-4 flex items-center gap-2">
-                <span className="text-xl">📍</span> 檢測步驟：
-              </h4>
-              <ol className="list-decimal pl-6 text-[17px] text-slate-700 font-medium space-y-3 leading-relaxed mb-6">
-                <li>摘下眼鏡，距離螢幕約 30-40 公分。</li>
-                <li>用手遮住左眼，單眼直視圖形中心。</li>
-                <li>觀察放射狀線條是否<strong className="text-rose-600">「有些特別黑、特別粗，或有些比較模糊」</strong>。</li>
-                <li>完成後，換遮右眼，重複上述步驟。</li>
-              </ol>
-              
-              <svg viewBox="0 0 400 400" className="w-full max-w-[280px] h-auto mx-auto bg-white rounded-full shadow-xl mb-6 p-2 border-2 border-slate-200 block">
-                <circle cx="200" cy="200" r="190" fill="#fff" />
-                {Array.from({ length: 18 }).map((_, i) => {
-                  const angle = (i * 10) * (Math.PI / 180);
-                  const x1 = 200 - 170 * Math.cos(angle);
-                  const y1 = 200 - 170 * Math.sin(angle);
-                  const x2 = 200 + 170 * Math.cos(angle);
-                  const y2 = 200 + 170 * Math.sin(angle);
-                  return (
-                    <line key={i} x1={x1} y1={y1} x2={x2} y2={y2} stroke="#0f172a" strokeWidth="6" strokeLinecap="round" />
-                  );
-                })}
-                <circle cx="200" cy="200" r="15" fill="#fff" stroke="#0f172a" strokeWidth="4" />
-              </svg>
-
-              <div className="bg-white p-4 rounded-xl border border-rose-200 shadow-sm">
-                <p className="text-rose-700 font-bold text-[16px] text-justify leading-loose">
-                  ⚠️ 警告：如果發現圖形中的線條深淺不一、粗細不同或有重影，表示您可能有散光問題或散光度數加深，建議重新驗光。
-                </p>
-              </div>
-            </div>
-          )}
-        </section>
-
-        {/* === 區塊五：參考文獻 === */}
+        {/* === 區塊四：參考文獻 === */}
         <section className="mt-10 pt-6 pb-12 border-t border-slate-200">
           <button 
             onClick={() => setShowReferences(!showReferences)}
